@@ -8,16 +8,20 @@ const router = express.Router();
 
 router.post("/register", async (req, res) => {
   try {
+    // get username and password from the user
     const { username, password } = req.body;
+    // if the username already exists in db or not
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       return res.status(400).json({ message: "Username already exists" });
     }
+    // password hashed
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({
       username,
       password: hashedPassword,
     });
+    // save the newly created user
     await user.save();
     res.status(201).json({ message: "User created successfully" });
   } catch (error) {
@@ -27,8 +31,10 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   try {
+    // username and password from the body
     const { username, password } = req.body;
 
+    // check if user already exists in the db or not
     const user = await User.findOne({ username });
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
@@ -44,6 +50,7 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
+    // token creation
     const token = jwt.sign(
       { id: user._id, username: user.username, role: user.role },
       process.env.JWT_SECRET,
@@ -74,13 +81,13 @@ router.post("/logout", authenticate, (req, res) => {
   res.json({ message: "Logged out successfully" });
 });
 
-router.get("/me",authenticate, async(req,res) =>{
+router.get("/me", authenticate, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password')
-    res.json(user)
+    const user = await User.findById(req.user.id).select("-password");
+    res.json(user);
   } catch (error) {
-    res.status(500).json({message:"Error fetching user data"})
+    res.status(500).json({ message: "Error fetching user data" });
   }
-})
+});
 
 export default router;

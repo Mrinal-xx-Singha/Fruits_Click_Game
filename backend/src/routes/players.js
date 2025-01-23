@@ -1,12 +1,12 @@
 import express from "express";
-import { authenticate, authroize } from "../middleware/auth.js";
+import { authenticate, authorize } from "../middleware/auth.js";
 import User from "../models/User.js";
 
 const router = express.Router();
 
 // Get all players (admin only)
 
-router.get("/", authenticate, authroize(["admin"]), async (req, res) => {
+router.get("/", authenticate, authorize(["admin"]), async (req, res) => {
   try {
     const players = await User.find({ role: "player" })
       .select("-password")
@@ -21,7 +21,7 @@ router.get("/", authenticate, authroize(["admin"]), async (req, res) => {
 router.patch(
   "/:id/toggle-block",
   authenticate,
-  authroize(["admin"]),
+  authorize(["admin"]),
   async (req, res) => {
     try {
       const player = await User.findById(req.params.id);

@@ -52,7 +52,7 @@ npm install
 
 Create a `.env` file in the backend directory:
 ```env
-MONGODB_URI=mongodb://localhost:27017/banana-game
+MONGO_URI=mongodb://localhost:27017/banana-game
 JWT_SECRET=your-secret-key
 FRONTEND_URL=http://localhost:5173
 PORT=3000

@@ -8,6 +8,7 @@ import playerRoutes from "./routes/players.js";
 import cookieParser from "cookie-parser";
 import { setupSocketHandlers } from "./socket/handlers.js";
 import { authenticateSocket } from "./middleware/auth.js";
+import cors from "cors";
 
 dotenv.config();
 
@@ -22,6 +23,13 @@ const io = new Server(httpServer, {
 //Middlewares
 app.use(express.json());
 app.use(cookieParser());
+
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 //Routes
 app.use("/api/auth", authRoutes);
